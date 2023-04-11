@@ -112,7 +112,7 @@ public class BlockGame {
                     g2d.setColor(Color.WHITE);
                     g2d.setFont(new Font("TimesRoman", Font.BOLD, 20));
                     g2d.drawString("score : " + score, CANVAS_WIDTH/2 - 30, 20);
-                    if( isGameFinish ) {
+                    if(isGameFinish) {
                         g2d.setColor(Color.RED);
                         g2d.drawString("Game Finished!", CANVAS_WIDTH/2 - 55, 50);
                     }
