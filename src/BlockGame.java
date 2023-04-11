@@ -5,8 +5,6 @@ import javax.swing.*;
 public class BlockGame {
 
     static class MyFrame extends JFrame {
-
-        //constant
         static int BALL_WIDTH = 20;
         static int BALL_HEIGHT = 20;
         static int BLOCK_ROWS = 5;
@@ -18,16 +16,14 @@ public class BlockGame {
         static int BAR_HEIGHT = 20;
         static int CANVAS_WIDTH = 400 + (BLOCK_GAP * BLOCK_COLUMNS) - BLOCK_GAP;
         static int CANVAS_HEIGHT = 600;
-
-        //variable
         static MyPanel myPanel = null;
         static int score = 0;
         static Timer timer = null;
         static Block[][] blocks = new Block[BLOCK_ROWS][BLOCK_COLUMNS];
         static Bar bar = new Bar();
         static Ball ball = new Ball();
-        static int barXTarget = bar.x; //Target Value - interpolation
-        static int dir = 0; //0 : Up-Right 1 : Down-Rigth 2 : Up-Left 3 : Down-Left
+        static int barXTarget = bar.x;
+        static int dir = 0;
         static int ballSpeed = 5;
         static boolean isGameFinish = false;
 
@@ -53,7 +49,6 @@ public class BlockGame {
                 return new Point( x + (BALL_WIDTH), y + (BALL_HEIGHT/2));
             }
         }
-
         static class Bar {
             int x = CANVAS_WIDTH/2 - BAR_WIDTH/2;
             int y = CANVAS_HEIGHT - 100;
@@ -66,11 +61,11 @@ public class BlockGame {
             int y = 0;
             int width = BLOCK_WIDTH;
             int height = BLOCK_HEIGHT;
-            int color = 0; //0:white 1:yellow 2:blue 3:mazanta 4:red
-            boolean isHidden = false; //after collision, block will be hidden.
+            int color = 0;
+            boolean isHidden = false;
         }
 
-        static class MyPanel extends JPanel { //VANVAS for Draw!
+        static class MyPanel extends JPanel {
             public MyPanel() {
                 this.setSize(CANVAS_WIDTH, CANVAS_HEIGHT);
                 this.setBackground(Color.BLACK);
@@ -116,12 +111,8 @@ public class BlockGame {
                         g2d.setColor(Color.RED);
                         g2d.drawString("Game Finished!", CANVAS_WIDTH/2 - 55, 50);
                     }
-
-                    //draw Ball
                     g2d.setColor(Color.WHITE);
                     g2d.fillOval(ball.x, ball.y, BALL_WIDTH, BALL_HEIGHT);
-
-                    //draw Bar
                     g2d.setColor(Color.WHITE);
                     g2d.fillRect(bar.x, bar.y, bar.width, bar.height);
                 }
@@ -152,7 +143,7 @@ public class BlockGame {
                     blocks[i][j].y = 100 + BLOCK_HEIGHT*i + BLOCK_GAP*i;
                     blocks[i][j].width = BLOCK_WIDTH;
                     blocks[i][j].height = BLOCK_HEIGHT;
-                    blocks[i][j].color = 4 - i;  //0:white 1:yellow 2:blue 3:mazanta 4:red
+                    blocks[i][j].color = 4 - i;
                     blocks[i][j].isHidden = false;
                 }
             }
@@ -160,18 +151,18 @@ public class BlockGame {
         public void setKeyListener() {
             this.addKeyListener( new KeyAdapter() {
                 @Override
-                public void keyPressed(KeyEvent e) { //Key Event
+                public void keyPressed(KeyEvent e) {
                     if( e.getKeyCode() == KeyEvent.VK_LEFT ) {
                         System.out.println("Pressed Left Key");
                         barXTarget -= 20;
-                        if( bar.x < barXTarget) { //repeate key pressed...
+                        if( bar.x < barXTarget) {
                             barXTarget = bar.x;
                         }
                     }
                     else if( e.getKeyCode() == KeyEvent.VK_RIGHT ) {
                         System.out.println("Pressed Right Key");
                         barXTarget += 20;
-                        if( bar.x > barXTarget) { //repeate key pressed...
+                        if( bar.x > barXTarget) {
                             barXTarget = bar.x;
                         }
                     }
@@ -181,20 +172,17 @@ public class BlockGame {
         public void startTimer() {
             timer = new Timer(20, new ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent e) { //Timer Event
+                public void actionPerformed(ActionEvent e) {
                     movement();
-                    checkCollision();  //Wall, Bar
-                    checkCollisionBlock(); //Blocks 50
-                    myPanel.repaint(); //Redraw!
-
+                    checkCollision();
+                    checkCollisionBlock();
+                    myPanel.repaint();
                     isGameFinish();
-
                 }
             });
-            timer.start(); //Start Timer!
+            timer.start();
         }
         public void isGameFinish() {
-            //Game Success!
             int count = 0;
             for(int i=0; i<BLOCK_ROWS; i++) {
                 for(int j=0; j<BLOCK_COLUMNS; j++) {
@@ -204,8 +192,6 @@ public class BlockGame {
                 }
             }
             if( count == BLOCK_ROWS * BLOCK_COLUMNS) {
-                //Game Finished!
-                //timer.stop();
                 isGameFinish = true;
             }
         }
@@ -216,81 +202,68 @@ public class BlockGame {
                 bar.x -= 5;
             }
 
-            if(dir==0) { //0 : Up-Right
+            if(dir==0) {
                 ball.x += ballSpeed;
                 ball.y -= ballSpeed;
-            }else if(dir==1) { //1 : Down-Right
+            }else if(dir==1) {
                 ball.x += ballSpeed;
                 ball.y += ballSpeed;
-            }else if(dir==2) { //2 : Up-Left
+            }else if(dir==2) {
                 ball.x -= ballSpeed;
                 ball.y -= ballSpeed;
-            }else if(dir==3) { //3 : Down-Left
+            }else if(dir==3) {
                 ball.x -= ballSpeed;
                 ball.y += ballSpeed;
             }
 
         }
         public boolean duplRect(Rectangle rect1, Rectangle rect2) {
-            return rect1.intersects(rect2); //check two Rect is Duplicated!
+            return rect1.intersects(rect2);
         }
         public void checkCollision() {
-            if(dir==0) { //0 : Up-Right
-                //Wall
-                if(ball.y < 0) { //wall upper
+            if(dir==0) {
+                if(ball.y < 0) {
                     dir = 1;
                 }
-                if(ball.x>CANVAS_WIDTH-BALL_WIDTH) { //wall right
+                if(ball.x>CANVAS_WIDTH-BALL_WIDTH) {
                     dir = 2;
                 }
-                //Bar - none
-
-            }else if(dir==1) { //1 : Down-Right
-                //Wall
-                if(ball.y > CANVAS_HEIGHT-BALL_HEIGHT-BALL_HEIGHT) { //wall bottom
+            }else if(dir==1) {
+                if(ball.y > CANVAS_HEIGHT-BALL_HEIGHT-BALL_HEIGHT) {
                     dir = 0;
-
-                    //game reset
                     dir = 0;
                     ball.x = CANVAS_WIDTH/2 - BALL_WIDTH/2;
                     ball.y = CANVAS_HEIGHT/2 - BALL_HEIGHT/2;
                     score = 0;
                 }
-                if(ball.x > CANVAS_WIDTH-BALL_WIDTH) { //wall right
+                if(ball.x > CANVAS_WIDTH-BALL_WIDTH) {
                     dir = 3;
                 }
-                //Bar
                 if( ball.getBottomCenter().y >= bar.y ) {
                     if( duplRect(new Rectangle(ball.x, ball.y, ball.width, ball.height),
                             new Rectangle(bar.x, bar.y, bar.width, bar.height)) ) {
                         dir = 0;
                     }
                 }
-            }else if(dir==2) { //2 : Up-Left
-                //Wall
-                if( ball.y < 0 ) { //wall upper
+            }else if(dir==2) {
+                if( ball.y < 0 ) {
                     dir = 3;
                 }
-                if( ball.x < 0) { //wall left
+                if( ball.x < 0) {
                     dir = 0;
                 }
-                //Bar - none
 
-            }else if(dir==3) { //3 : Down-Left
-                //Wall
-                if( ball.y > CANVAS_HEIGHT-BALL_HEIGHT-BALL_HEIGHT) { //wall bottom
+            }else if(dir==3) {
+                if( ball.y > CANVAS_HEIGHT-BALL_HEIGHT-BALL_HEIGHT) {
                     dir = 2;
-
-                    //game reset
                     dir = 0;
                     ball.x = CANVAS_WIDTH/2 - BALL_WIDTH/2;
                     ball.y = CANVAS_HEIGHT/2 - BALL_HEIGHT/2;
                     score = 0;
                 }
-                if(ball.x < 0) { //wall left
+                if(ball.x < 0) {
                     dir = 1;
                 }
-                //Bar
                 if( ball.getBottomCenter().y >= bar.y ) {
                     if( duplRect(new Rectangle(ball.x, ball.y, ball.width, ball.height),
                             new Rectangle(bar.x, bar.y, bar.width, bar.height)) ) {
@@ -300,20 +273,17 @@ public class BlockGame {
             }
         }
         public void checkCollisionBlock() {
-            //0 : Up-Right 1 : Down-Rigth 2 : Up-Left 3 : Down-Left
             for(int i=0; i<BLOCK_ROWS; i++) {
                 for(int j=0; j<BLOCK_COLUMNS; j++) {
                     Block block = blocks[i][j];
                     if(block.isHidden == false) {
-                        if(dir==0) { //0 : Up-Right
+                        if(dir==0) {
                             if( duplRect(new Rectangle(ball.x, ball.y, ball.width, ball.height),
                                     new Rectangle(block.x, block.y, block.width, block.height)) ) {
                                 if( ball.x > block.x + 2 &&
                                         ball.getRightCenter().x <= block.x + block.width - 2) {
-                                    //block bottom collision
                                     dir = 1;
                                 }else {
-                                    //block left collision
                                     dir = 2;
                                 }
                                 block.isHidden = true;
@@ -330,15 +300,13 @@ public class BlockGame {
                                 }
                             }
                         }
-                        else if(dir==1) { //1 : Down-Rigth
+                        else if(dir==1) {
                             if( duplRect(new Rectangle(ball.x, ball.y, ball.width, ball.height),
                                     new Rectangle(block.x, block.y, block.width, block.height)) ) {
                                 if( ball.x > block.x + 2 &&
                                         ball.getRightCenter().x <= block.x + block.width - 2) {
-                                    //block top collision
                                     dir = 0;
                                 }else {
-                                    //block left collision
                                     dir = 3;
                                 }
                                 block.isHidden = true;
@@ -355,15 +323,13 @@ public class BlockGame {
                                 }
                             }
                         }
-                        else if(dir==2) { //2 : Up-Left
+                        else if(dir==2) {
                             if( duplRect(new Rectangle(ball.x, ball.y, ball.width, ball.height),
                                     new Rectangle(block.x, block.y, block.width, block.height)) ) {
                                 if( ball.x > block.x + 2 &&
                                         ball.getRightCenter().x <= block.x + block.width - 2) {
-                                    //block bottom collision
                                     dir = 3;
                                 }else {
-                                    //block right collision
                                     dir = 0;
                                 }
                                 block.isHidden = true;
@@ -380,15 +346,13 @@ public class BlockGame {
                                 }
                             }
                         }
-                        else if(dir==3) { //3 : Down-Left
+                        else if(dir==3) {
                             if( duplRect(new Rectangle(ball.x, ball.y, ball.width, ball.height),
                                     new Rectangle(block.x, block.y, block.width, block.height)) ) {
                                 if( ball.x > block.x + 2 &&
                                         ball.getRightCenter().x <= block.x + block.width - 2) {
-                                    //block top collision
                                     dir = 2;
                                 }else {
-                                    //block right collision
                                     dir = 1;
                                 }
                                 block.isHidden = true;
