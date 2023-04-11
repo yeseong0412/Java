@@ -1,9 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
 public class BlockGame {
-
     static class MyFrame extends JFrame {
         static int BALL_WIDTH = 20;
         static int BALL_HEIGHT = 20;
@@ -78,7 +76,6 @@ public class BlockGame {
                 drawUI( g2d );
             }
             private void drawUI(Graphics2D g2d) {
-                //draw Blocks
                 for(int i=0; i<BLOCK_ROWS; i++) {
                     for(int j=0; j<BLOCK_COLUMNS; j++) {
                         if(blocks[i][j].isHidden) {
@@ -102,8 +99,6 @@ public class BlockGame {
                         g2d.fillRect(blocks[i][j].x, blocks[i][j].y,
                                 blocks[i][j].width, blocks[i][j].height);
                     }
-
-                    //draw score
                     g2d.setColor(Color.WHITE);
                     g2d.setFont(new Font("TimesRoman", Font.BOLD, 20));
                     g2d.drawString("score : " + score, CANVAS_WIDTH/2 - 30, 20);
